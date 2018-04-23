@@ -1,4 +1,4 @@
-package SocketsAvaliacao;
+package projeto3_SI;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -57,14 +57,20 @@ public class Cliente_Sokoban
 			level = scan.nextLine();
 			dataOut.writeUTF(level);
 			dataOut.flush();
+			
+			serverResponse = dataIn.readUTF();
+					
 		}
 		
-		String serverResponse2 = dataIn.readUTF();
-		System.out.println("Servidor disse: " + serverResponse2);
+		System.out.println("Servidor disse: " + serverResponse);
+		
+		
 
 		// Cleanup operations, close the streams, socket and then exit
 		dataOut.close();
 		dataIn.close();
 		socket.close();
+		scan.close();
+		
 	}
 }
