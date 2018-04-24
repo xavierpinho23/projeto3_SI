@@ -20,13 +20,14 @@ public class Server_Sokoban
 	// but it also keeps us from handling possible IO errors 
 	// (when for instance there is a problem when connecting with the other party)
 	
-	static Nivel_Sokoban niveis;
-	private ArrayList<String> users = new ArrayList<String>();
-	private ArrayList<Integer> pontuações = new ArrayList<Integer>();
+
 	
+	@SuppressWarnings("resource")
 	public static void main(String args[]) throws IOException
 	{
 		// Register service on port 1234
+			ArrayList<String> users = new ArrayList<String>();
+			ArrayList<Integer> pontuações = new ArrayList<Integer>();
 		ServerSocket s = new ServerSocket(1234);
 		
 		while (true)
@@ -45,7 +46,7 @@ public class Server_Sokoban
 			// use the DataInputStream to read a String sent by the client
 			String level = dataIn.readUTF();
 
-			System.out.println("Here");
+			
 			
 			while(!(level.equals("1")) && !(level.equals("2")) && !(level.equals("3")) && !(level.equals("4")))
 			{
@@ -55,34 +56,22 @@ public class Server_Sokoban
 			}
 				
 
-			niveis = new Nivel_Sokoban(Integer.parseInt(level));
-			dataOut.writeUTF("Cliente escolheu o nível " + level + ". \n");
+			Nivel_Sokoban niveis = new Nivel_Sokoban(Integer.parseInt(level));
+			String tabuleiro = niveis.toString();
+			
+			
+			dataOut.writeUTF("Cliente escolheu o nível: " + niveis.getLevel() + "\n" + tabuleiro);
 			dataOut.flush();
-				
 
 			
-			String resposta = dataIn.readUTF();
+				
+		
+			String tecla = dataIn.readUTF();
+			String resposta = niveis.movimentos(tecla);
 			//Enquanto não sair, nem restar nem ganhar o jogo
-			while (!resposta.equals("quit") && !resposta.equals("restart") && !resposta.equals("finish"))
+			while (!resposta.equals("quit"))
 			{
-				if (resposta.equals("movValido"))
-				{
-					
-				}
-				else if (resposta.equals("movInvalido"))
-				{
-					
-				}
-				/*if (nivel[yX1][xX1].equals("B") && nivel[yX2][xX2].equals("B")  && nivel[yX3][xX3].equals("B") && nivel[yX4][xX4] && nivel[yX5][xX5])
-				{
-					dataOut.writeUTF("Nível Concluído!");
-					dataOut.flush();
-				}*/
-					
-				
-				
-				
-				
+				dataOut.writeUTF(resposta);	
 			}
 			
 			

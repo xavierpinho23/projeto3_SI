@@ -18,8 +18,22 @@ public class Cliente_Sokoban
 	// 'throws IOException' enables us to write the code without try/catch blocks
 	// but it also keeps us from handling possible IO errors 
 	// (when for instance there is a problem when connecting with the other party) 
+	public static String[][] tabuleiro(String serverResponse){
+		int j=0;
+		String[][] tab= {};
+		for (int i=0;i<serverResponse.length();i++) {
+			char c = serverResponse.charAt(i);
+			if (c == '\n') {
+			j++;
+		}
+		tab[j][i]=String.valueOf(serverResponse.charAt(i));
+	}
+	return tab;
+	}
 	public static void main(String args[]) throws IOException 
 	{
+		boolean jogar = true;
+		
 		// Open your connection to a server, at port 1234
 		Socket socket = new Socket("localhost", 1234);
 
@@ -64,7 +78,23 @@ public class Cliente_Sokoban
 		
 		System.out.println("Servidor disse: " + serverResponse);
 		
+		String[][] tab = tabuleiro(serverResponse);
 		
+		while (jogar) {
+			System.out.println("Prima w, s, a ou d para se mover. q para restart e x para terminar jogo.");
+			String resposta = scan.nextLine();
+			dataOut.writeUTF(resposta);
+			dataOut.flush();
+			
+			serverResponse = dataIn.readUTF();
+			if (serverResponse.equals("movM")) {
+				if (resposta.equals("a")) {
+					table[]
+				}
+			}
+		}
+		dataOut.writeUTF("");
+		dataOut.flush();
 
 		// Cleanup operations, close the streams, socket and then exit
 		dataOut.close();

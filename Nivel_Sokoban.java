@@ -14,10 +14,14 @@ public class Nivel_Sokoban
 	private int yM;
 	private int x1M;
 	private int y1M;
+	Point fB;
+	Point M1;
+	private int posoffB;
 
 	
 	public Nivel_Sokoban(int nivel) {
 		this.level=nivel;
+		table();
 	}
 	
 	public void table()
@@ -53,12 +57,12 @@ public class Nivel_Sokoban
 		// criação do tabuleiro de jogo do nível 1
 		String[][] table = {
 				{ " ", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", " ", " ", " "," " },
-				{ " ", " ", " ", " ", " ", " ", "*", " ", " ", "X", " ", " ", "*", " ", " ", " ", " ", " ", " ", " ", " "," " },
+				{ " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", " ", " ", " "," " },
 				{ " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", "*", "*","*" },
-				{ "*", "*", "*", "*", "*", "*", "*", " ", " ", "B", " ", " ", " ", " ", " ", "B", " ", " ", "X", " ", " ","*" },
-				{ "*", " ", " ", "X", " ", " ", " ", " ", " ", "B", " ", " ", "M", " ", " ", "*", "*", "*", "*", "*", "*","*" },
-				{ "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", " ", " ", "B", " ", " ", "*", " ", " ", " ", " ", " "," " },
-				{ " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", "X", " ", " ", "*", " ", " ", " ", " ", " "," " },
+				{ "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ","*" },
+				{ "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*","*" },
+				{ "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " "," " },
+				{ " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " "," " },
 				{ " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " "," " }};
 		
 		// positions of boxes B, worker M and storage locations X of level 1
@@ -105,10 +109,10 @@ public class Nivel_Sokoban
 		String[][] table = {
 				{ "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", " ", " ", " "," ", " ", " ", " " },
 				{ "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", " ", " ", " "," ", " ", " ", " " },
-				{ "*", " ", " ", " ", " ", " ", "B", " ", " ", "M", " ", " ", "*", " ", " ", " ", " ", " ", "*", "*", "*","*", "*", "*", "*" },
-				{ "*", " ", " ", " ", " ", " ", "B", " ", " ", "B", " ", " ", "*", " ", " ", " ", " ", " ", "*", " ", " ","X", " ", " ", "*" },
-				{ "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", " ", " ","X", " ", " ", "*" },
-				{ " ", " ", " ", "*", "*", "*", "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ","X", " ", " ", "*" },
+				{ "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", "*", "*", "*","*", "*", "*", "*" },
+				{ "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", " ", " ", " ", "*", " ", " "," ", " ", " ", "*" },
+				{ "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", " ", " "," ", " ", " ", "*" },
+				{ " ", " ", " ", "*", "*", "*", "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "," ", " ", " ", "*" },
 				{ " ", " ", " ", "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", "*", "*", "*", " ", " "," ", " ", " ", "*" },
 				{ " ", " ", " ", "*", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "*", " ", " ", "*", "*", "*","*", "*", "*", "*" },
 				{ " ", " ", " ", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", " ", " ", " ", " ", " "," ", " ", " ", " " }, };		
@@ -246,7 +250,7 @@ public class Nivel_Sokoban
 	public String toString()
 	{
 		
-		String s= "";
+		String s="";
 		for (int i = 0; i < table.length; i++)
 		{
 			for (int j = 0; j < table[0].length; j++)
@@ -261,12 +265,15 @@ public class Nivel_Sokoban
 	
 	public String movimentos (String tecla)
 	{
-		String resposta = "";
-		Point M1= new Point(y1M,x1M);
+		String resposta = "movM";
+		M1= new Point(y1M,x1M);
 		
-		if (tecla.equals("a"))
+		if (!(tecla.equals("a") && tecla.equals("s") && tecla.equals("d") && tecla.equals("w") && tecla.equals("q") && tecla.equals("x"))) {
+			resposta="teclaInvalida";
+		}
+		else if (tecla.equals("a"))
 		{
-			M1.translate(0,-1);;	
+			M1.translate(0,-1);;
 		}
 		else if (tecla.equals("s")) 
 		{
@@ -302,14 +309,16 @@ public class Nivel_Sokoban
 			if (M1.equals(pointsNivel.get(i)))
 			{
 				
-			//If the future position of B is occupied by "*" or "B" the system doesn't evolves
-				Point fB = pointsNivel.get(i);
+			//If the future position of B is occupied by "*" or "B" the system doesn't evolve
+				fB = pointsNivel.get(i);
+				posoffB=i;
 				fB.translate((int) (M1.getX()-pointsNivel.get(0).getX()), (int) (M1.getY()-pointsNivel.get(0).getY())); 
 				
 				if (table[(int) fB.getX()][(int) fB.getY()].equals("*") 
 					|| table[(int) fB.getX()][(int) fB.getY()].equals("B") ) 
 				{
 					M1.setLocation(pointsNivel.get(0));
+					fB=null;
 					resposta = "movInvalido";
 				}
 				else
@@ -318,10 +327,23 @@ public class Nivel_Sokoban
 				table[(int)fB.getX()][(int) fB.getY()]="B";
 			
 				pointsNivel.set(i, fB);
-				resposta = "movValido";
+				resposta = "movMeB";
 				}
 			}
 		}
+
+		
+		
+		return resposta;
+
+
+}
+	public void mover() {
+		table[(int)pointsNivel.get(0).getX()][(int)pointsNivel.get(0).getY()]=" ";
+		table[(int)M1.getX()][(int) M1.getY()] = "M";
+		table[(int)pointsNivel.get(posoffB).getX()][(int)pointsNivel.get(posoffB).getY()]=" ";
+		table[(int)fB.getX()][(int)fB.getY()] = "B";
+		//This guarantee that X will appear if nothing is in X supposed positions
 		for (int i =2;i<pointsNivel.size();i+=2)
 		{
 			for (int j =1;j<pointsNivel.size();j+=2) {
@@ -333,8 +355,6 @@ public class Nivel_Sokoban
 			}
 		
 		}
-	
-
 		
 		//This guarantee that M and B will appear if they are in X positions
 		table[(int)pointsNivel.get(0).getX()][(int) pointsNivel.get(0).getY()] = "M";
@@ -342,11 +362,5 @@ public class Nivel_Sokoban
 			table[(int)pointsNivel.get(i).getX()][(int)pointsNivel.get(i).getY()]="B";
 		}
 		
-		yM=y1M;
-		xM=x1M;
-		
-		return resposta;
-
-
-}
+	}
 }
