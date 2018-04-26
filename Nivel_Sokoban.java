@@ -27,10 +27,10 @@ public class Nivel_Sokoban
 	public void table()
 	{
 		if (level==1) {
-		int yM = 4;    //original row of M
-		int xM = 12;   //original column of M
-		int y1M = yM;  //new row of M
-		int x1M = xM;  //new column of M
+		yM = 4;    //original row of M
+		xM = 12;   //original column of M
+		y1M = yM;  //new row of M
+		x1M = xM;  //new column of M
 		
 		Point M = new Point(yM,xM);
 		
@@ -81,10 +81,10 @@ public class Nivel_Sokoban
 		}
 		else if(level==2){
 
-		int yM=2;  // original row of M
-		int xM=7;  // original column of M
-		int y1M=yM; // new row of M
-		int x1M=xM; // new column of M
+		yM=2;  // original row of M
+		xM=7;  // original column of M
+		y1M=yM; // new row of M
+		x1M=xM; // new column of M
 		
 		Point M = new Point(yM,xM);
 		
@@ -129,10 +129,10 @@ public class Nivel_Sokoban
 		this.table=table;
 	}
 		else if (level==3) {
-		int yM=2;  // original row of M
-		int xM=5;  // original column of M
-		int y1M=yM; // new row of M
-		int x1M=xM; // new column of M
+		yM=2;  // original row of M
+		xM=5;  // original column of M
+		y1M=yM; // new row of M
+		x1M=xM; // new column of M
 		
 		Point M = new Point(yM,xM);
 		
@@ -186,10 +186,10 @@ public class Nivel_Sokoban
 	}
 
 		else if (level==4) {
-		int yM=1;  // original row of M
-		int xM=6;  // original column of M
-		int y1M=yM; // new row of M
-		int x1M=xM; // new column of M
+		yM=1;  // original row of M
+		xM=6;  // original column of M
+		y1M=yM; // new row of M
+		x1M=xM; // new column of M
 		
 		Point M = new Point(yM,xM);
 		
@@ -266,9 +266,9 @@ public class Nivel_Sokoban
 	public String movimentos (String tecla)
 	{
 		System.out.println("Eu");
-		M1= new Point(y1M,x1M);
+		M1 = new Point(y1M,x1M);
 		String resposta = "movM:"+M1.toString();
-		if (!(tecla.equals("a") && tecla.equals("s") && tecla.equals("d") && tecla.equals("w") && tecla.equals("q") && tecla.equals("x"))) {
+		if (!(tecla.equals("a") || tecla.equals("s") || tecla.equals("d") || tecla.equals("w") || tecla.equals("q") || tecla.equals("x"))) {
 			resposta="teclaInvalida";
 		}
 		else if (tecla.equals("a"))
@@ -299,9 +299,11 @@ public class Nivel_Sokoban
 		}
 		if (table[y1M][x1M].equals("*")) //If the future position of worker M is occupied by "*" the system doesn't evolve
 		{
+			System.out.println(M1);
 			M1.setLocation(pointsNivel.get(0));
-			
+			System.out.println(M1);
 			resposta = "movInvalido";
+			System.out.println("yo");
 		}
 		
 		for (int i =2;i<pointsNivel.size();i+=2)
@@ -327,7 +329,7 @@ public class Nivel_Sokoban
 				table[(int)fB.getX()][(int) fB.getY()]="B";
 			
 				pointsNivel.set(i, fB);
-				resposta = "movMeB:"+M1.toString()+":"+fB.toString();
+				resposta = "movMeB:"+M1.getX()+ ","+M1.getY()  + ":"+fB.getX() + "," + fB.getY();
 				}
 			}
 		}

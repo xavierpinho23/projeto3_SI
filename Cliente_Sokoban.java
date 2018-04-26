@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,20 +21,19 @@ public class Cliente_Sokoban
 	// 'throws IOException' enables us to write the code without try/catch blocks
 	// but it also keeps us from handling possible IO errors 
 	// (when for instance there is a problem when connecting with the other party) 
+	
 	public static String[][] tabuleiro(String serverResponse){
-		int j=0;
-		String[][] tab= {};
-		for (int i=0;i<serverResponse.length();i++) {
-			char c = serverResponse.charAt(i);
-			if (c == '\n') {
-				
-			j++;
-			
-			
+		
+		String[] tab = serverResponse.split("\n");
+		String[][] tabs = new String[tab.length][tab[1].length()];
+		for (int i = 1; i<tab.length;i++) {
+			for (int j = 0; j < tab[1].length();j++) {
+				tabs[i-1][j] = String.valueOf(tab[i].charAt(j));
+			}
 		}
-		tab[j][i]=String.valueOf(serverResponse.charAt(i));
-	}
-	return tab;
+		System.out.println(Arrays.toString(tabs[0]));
+		return tabs;
+		
 	}
 	public static void main(String args[]) throws IOException 
 	{
@@ -103,6 +103,10 @@ public class Cliente_Sokoban
 			
 			serverResponse = dataIn.readUTF();
 			System.out.println(serverResponse);
+			String[] response = serverResponse.split(":");
+			if (response[0].equals("movM")) {
+				
+			}
 					
 		}
 		dataOut.writeUTF("");

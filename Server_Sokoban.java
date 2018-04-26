@@ -173,7 +173,7 @@ public class Server_Sokoban
 				
 				//Terceira conexão - jogo
 				System.out.println("3");
-				//server.trata3Conexao(socket);
+				server.trata3Conexao(socket);
 				
 				System.out.println("Cliente finalizado.");
 			
