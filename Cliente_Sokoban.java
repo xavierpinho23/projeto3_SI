@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A simple greeting client. More information about sockets at:
@@ -24,7 +26,10 @@ public class Cliente_Sokoban
 		for (int i=0;i<serverResponse.length();i++) {
 			char c = serverResponse.charAt(i);
 			if (c == '\n') {
+				
 			j++;
+			
+			
 		}
 		tab[j][i]=String.valueOf(serverResponse.charAt(i));
 	}
@@ -32,19 +37,27 @@ public class Cliente_Sokoban
 	}
 	public static void main(String args[]) throws IOException 
 	{
+		try {
 		boolean jogar = true;
 		
 		// Open your connection to a server, at port 1234
 		Socket socket = new Socket("localhost", 1234);
 
 		// Build DataStreams (input and output) to send and receive messages to/from the server
-		InputStream in = socket.getInputStream();
-		DataInputStream dataIn = new DataInputStream(in);
 		OutputStream out = socket.getOutputStream();
 		DataOutputStream dataOut = new DataOutputStream(out);
 		
-		System.out.println("WELCOME TO SOKOBAN! \n\n");
+		InputStream in = socket.getInputStream();
+		DataInputStream dataIn = new DataInputStream(in);
+
 		
+		System.out.println("WELCOME TO SOKOBAN! \n\n");
+		String msg = "Hello";
+		dataOut.writeUTF(msg);
+		dataOut.flush();
+		
+		msg = dataIn.readUTF();
+		System.out.println("Resposta: " + msg);
 		Scanner scan = new Scanner(System.in);
 		
 		System.out.println("Choose a level: \n");
@@ -58,7 +71,9 @@ public class Cliente_Sokoban
 		dataOut.writeUTF(level);
 		dataOut.flush();
 		
+		
 		String serverResponse = dataIn.readUTF();
+	
 		
 		while(serverResponse.equals("ERRO"))
 		{
@@ -87,11 +102,8 @@ public class Cliente_Sokoban
 			dataOut.flush();
 			
 			serverResponse = dataIn.readUTF();
-			if (serverResponse.equals("movM")) {
-				if (resposta.equals("a")) {
-					table[]
-				}
-			}
+			System.out.println(serverResponse);
+					
 		}
 		dataOut.writeUTF("");
 		dataOut.flush();
@@ -101,6 +113,10 @@ public class Cliente_Sokoban
 		dataIn.close();
 		socket.close();
 		scan.close();
+		}
+		catch (IOException ex) {
+			Logger.getLogger(Cliente_Sokoban.class.getName()).log(Level.SEVERE,null,ex);
+		}
 		
 	}
 }

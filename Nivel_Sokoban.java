@@ -265,9 +265,9 @@ public class Nivel_Sokoban
 	
 	public String movimentos (String tecla)
 	{
-		String resposta = "movM";
+		System.out.println("Eu");
 		M1= new Point(y1M,x1M);
-		
+		String resposta = "movM:"+M1.toString();
 		if (!(tecla.equals("a") && tecla.equals("s") && tecla.equals("d") && tecla.equals("w") && tecla.equals("q") && tecla.equals("x"))) {
 			resposta="teclaInvalida";
 		}
@@ -327,7 +327,7 @@ public class Nivel_Sokoban
 				table[(int)fB.getX()][(int) fB.getY()]="B";
 			
 				pointsNivel.set(i, fB);
-				resposta = "movMeB";
+				resposta = "movMeB:"+M1.toString()+":"+fB.toString();
 				}
 			}
 		}
