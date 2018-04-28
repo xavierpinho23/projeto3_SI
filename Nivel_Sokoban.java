@@ -1,4 +1,4 @@
-package projeto3_SI;
+package SocketsAvaliacao;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -235,7 +235,6 @@ public class Nivel_Sokoban
 		this.table=table;
 		}
 }
-	//?? ao terem todos o mesmo nome nao se vai atrofiar?
 
 	public int getLevel()
 	{
@@ -262,46 +261,54 @@ public class Nivel_Sokoban
 		return s;
 		
 	}
-	
 	public String movimentos (String tecla)
 	{
-		System.out.println("Eu");
 		M1 = new Point(y1M,x1M);
-		String resposta = "movM:"+M1.toString();
-		if (!(tecla.equals("a") || tecla.equals("s") || tecla.equals("d") || tecla.equals("w") || tecla.equals("q") || tecla.equals("x"))) {
-			resposta="teclaInvalida";
-		}
-		else if (tecla.equals("a"))
-		{
-			M1.translate(0,-1);;
-		}
-		else if (tecla.equals("s")) 
-		{
-			M1.translate(+1,0);;
-		}
-		else if (tecla.equals("d")) 
-		{
-			M1.translate(0, +1);;
-		}
-		else if (tecla.equals("w"))
-		{
-			M1.translate(-1, 0);
-		}
+		String resposta = "";
+		boolean jogo = true;
 		
-		
-		if (tecla.equals("q")) 
+		while (jogo)
 		{
-			resposta = "restart";
-		}
-		else if (tecla.equals("x"))
-		{
-			resposta = "quit";
+			if (!(tecla.equals("a") || !tecla.equals("s") || !tecla.equals("d") || !tecla.equals("w")
+					|| !tecla.equals("q") || !tecla.equals("x")))
+			{
+				resposta = "teclaInvalida";
+			}
+			else if (tecla.equals("a"))
+			{
+				M1.translate(0, -1);
+				resposta = "movA";
+			}
+			else if (tecla.equals("s"))
+			{
+				M1.translate(+1, 0);
+				resposta = "movS";
+			}
+			else if (tecla.equals("d"))
+			{
+				M1.translate(0, +1);
+				resposta = "movD";
+			}
+			else if (tecla.equals("w"))
+			{
+				M1.translate(-1, 0);
+				resposta = "movW";
+			}
+			else if (tecla.equals("q"))
+			{
+				resposta = "restart";
+			}
+			else if (tecla.equals("x"))
+			{
+				resposta = "quit";
+				jogo = false;
+			}
 		}
 		if (table[y1M][x1M].equals("*")) //If the future position of worker M is occupied by "*" the system doesn't evolve
 		{
 			System.out.println(M1);
 			M1.setLocation(pointsNivel.get(0));
-			System.out.println(M1);
+			
 			resposta = "movInvalido";
 			System.out.println("yo");
 		}
@@ -329,16 +336,13 @@ public class Nivel_Sokoban
 				table[(int)fB.getX()][(int) fB.getY()]="B";
 			
 				pointsNivel.set(i, fB);
-				resposta = "movMeB:"+M1.getX()+ ","+M1.getY()  + ":"+fB.getX() + "," + fB.getY();
+				//resposta = "movMeB:"+M1.getX()+ ","+M1.getY()  + ":"+fB.getX() + "," + fB.getY();
+				resposta = "movMeB";
 				}
 			}
 		}
-
-		
-		
 		return resposta;
-
-
+		
 }
 	public void mover() {
 		table[(int)pointsNivel.get(0).getX()][(int)pointsNivel.get(0).getY()]=" ";

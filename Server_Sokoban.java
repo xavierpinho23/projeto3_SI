@@ -1,4 +1,4 @@
-package projeto3_SI;
+package SocketsAvaliacao;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -47,7 +47,7 @@ public class Server_Sokoban
 		DataInputStream dataIn = new DataInputStream(in);
 		
 		String msg = dataIn.readUTF();
-		System.out.println("Mensagem recebida...");
+		System.out.println("Mensagem recebida 1...");
 		if (msg.contains(" ") || msg.isEmpty()) {
 			dataOut.writeUTF("NotOk");
 			dataOut.flush();
@@ -79,22 +79,22 @@ public class Server_Sokoban
 		InputStream in = socket.getInputStream();
 		DataInputStream dataIn = new DataInputStream(in);
 		
-		String msg = dataIn.readUTF();
-		System.out.println("Mensagem recebida...");
-		while(!(msg.equals("1")) && !(msg.equals("2")) && !(msg.equals("3")) && !(msg.equals("4")))
+		//Leitura do nivel escolhido pelo cliente
+		String level = dataIn.readUTF();
+		System.out.println("Mensagem recebida 2...");
+		
+		while(!(level.equals("1")) && !(level.equals("2")) && !(level.equals("3")) && !(level.equals("4")))
 		{
 			dataOut.writeUTF("ERRO");
 			dataOut.flush();
-			msg = dataIn.readUTF();
+			level = dataIn.readUTF();
 		}
-			
-
-		niveis = new Nivel_Sokoban(Integer.parseInt(msg));
+		
+		niveis = new Nivel_Sokoban(Integer.parseInt(level));
 		String tabuleiro = niveis.toString();
 		
-		
-		dataOut.writeUTF("nivel:" + niveis.getLevel() + "\n" + tabuleiro);
-
+		//enviar o tabuleiro para o Cliente
+		dataOut.writeUTF("nivel: " + niveis.getLevel() + "\n" + tabuleiro);
 		dataOut.flush();
 	
 		}
@@ -107,7 +107,7 @@ public class Server_Sokoban
 	}
 	private void trata3Conexao(Socket socket) throws IOException {
 		
-		//Tratar conversação cliente - servidor na escolha do nível
+		//Tratar conversação cliente - jogar
 		
 		try {	//Criar stream de entrada e saída
 		OutputStream out = socket.getOutputStream();
@@ -116,24 +116,39 @@ public class Server_Sokoban
 		InputStream in = socket.getInputStream();
 		DataInputStream dataIn = new DataInputStream(in);
 		
+		System.out.println("Mensagem recebida 3...");
+		
 		String tecla = dataIn.readUTF();
-		System.out.println("Mensagem recebida..." + tecla);
+		System.out.println("tecla = "+tecla);
 
-			
-		
+		//O PROBLEMA ESTÁ EM QUE O niveis.movimentos(tecla) nao esta a dar return de nada
 		String resposta = niveis.movimentos(tecla);
+		System.out.println("return = " + resposta);
+
 		//Enquanto não sair, nem restar nem ganhar o jogo
-		while (!resposta.equals("quit"))
+		boolean jogo = true;
+		while (jogo)
 		{
-			dataOut.writeUTF(resposta);	
+			System.out.println("oi");
+			
+			String serverResponse = niveis.movimentos(tecla);
+			
+			System.out.println("serverResponse=" + serverResponse);
+			dataOut.writeUTF(serverResponse);
 			dataOut.flush();
+			
+			tecla = dataIn.readUTF();
+			
+			if (tecla.equals("q"))
+			{
+				jogo = false;
+			}
 		}
-		
-		dataOut.flush();
-		
+				
 		//Fechar streams
 		dataIn.close();
 		dataOut.close();
+		
 		}
 		catch (IOException e) {
 			//Tratamento de falhas
@@ -152,7 +167,8 @@ public class Server_Sokoban
 			ArrayList<String> users = new ArrayList<String>();
 			ArrayList<Integer> pontuações = new ArrayList<Integer>();
 		
-		try {
+		try
+		{
 
 			// Wait and accept a connection
 			Server_Sokoban server = new Server_Sokoban();
@@ -161,29 +177,30 @@ public class Server_Sokoban
 			while (true)
 			{
 				System.out.println("1");
-				//Primeira conexão - login
+				// Primeira conexão - login
 				Socket socket = server.esperaConexao();
 				System.out.println("Cliente conectado.");
 				server.trata1Conexao(socket);
-				
-				//Segunda conexão - escolha de nivel
+
+				// Segunda conexão - escolha de nivel
 				System.out.println("2");
-				//server.esperaConexao();
+				// server.esperaConexao();
 				server.trata2Conexao(socket);
-				
-				//Terceira conexão - jogo
+
+				// Terceira conexão - jogo
 				System.out.println("3");
 				server.trata3Conexao(socket);
-				
+
 				System.out.println("Cliente finalizado.");
-			
-		}}
-		catch (IOException e){
-			
+
+			}
+		}
+		catch (IOException e)
+		{
+			System.out.println("upsss");
+
 		}
 
-
-
-			// use the DataInputStream to read a String sent by the client
-		}
+		// use the DataInputStream to read a String sent by the client
 	}
+}
