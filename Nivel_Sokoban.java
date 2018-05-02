@@ -317,14 +317,12 @@ public class Nivel_Sokoban
 			//Se o M vai para uma das posicoes de B
 			if (M1.equals(pointsNivel.get(i)))
 			{
-				//System.out.println(pointsNivel.get(i));
 				fB = pointsNivel.get(i);				
 				fB.translate((int) (M1.getX() - pointsNivel.get(0).getX()),(int) (M1.getY() - pointsNivel.get(0).getY()));
 
 				// If the future position of B is occupied by '*' or 'B' the system doesn't evolve
 				if (table[(int) fB.getX()][(int) fB.getY()] == '*' || table[(int) fB.getX()][(int) fB.getY()] == 'B')
 				{
-					//System.out.println(fB.getX() + " e " + fB.getY());
 					M1.setLocation(pointsNivel.get(0));
 					fB.setLocation(pointsNivel.get(i).getX(), pointsNivel.get(i).getY());
 					//fB = null;
@@ -336,20 +334,15 @@ public class Nivel_Sokoban
 					this.table[(int) M1.getX()][(int) M1.getY()] = 'M';
 					this.table[(int) fB.getX()][(int) fB.getY()] = 'B';
 					
-					pointsNivel.get(i).setLocation(fB.getX(), fB.getY());
-					//System.out.println(pointsNivel.get(i).getX() +" e " + pointsNivel.get(i).getY());
-					//System.out.println("pointsNivel i =" + pointsNivel.set(i, fB));
-					
+					pointsNivel.get(i).setLocation(fB.getX(), fB.getY());					
 					pointsNivel.get(0).setLocation(M1.getX(), M1.getY());
-					//System.out.println(pointsNivel.get(0).getX() +" e " + pointsNivel.get(0).getY());
-					//System.out.println("pointsNivel M1 =" + pointsNivel.set(0, M1));
 
 					resposta = "movMeB:" + M1.getX() + "," + M1.getY() + ":" + fB.getX() + "," + fB.getY();
 				}
 			}
 		}	
 		}
-		for (int i = 1; i<pointsNivel.size();i+=2)
+		/*for (int i = 1; i<pointsNivel.size();i+=2)
 			//Locais de Entrega X
 		{
 			if (table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B')
@@ -366,7 +359,8 @@ public class Nivel_Sokoban
 			}
 
 		
-		}
+		}*/
+		//matriz do servidor
 			/*for (int r = 0;r<table.length;r++) {
 				for (int j = 0; j<table[0].length;j++) {
 					System.out.print(table[r][j]);
@@ -375,37 +369,43 @@ public class Nivel_Sokoban
 			}*/
 		
 		//Verificar se o nivel está concluido
-		/*for (int i = 1; i < pointsNivel.size(); i += 2)
+		int contadorCiclo = 0;
+		int contadorCaixas = 0;
+		for (int i = 1; i < pointsNivel.size(); i += 2)
 			//locais de entrega X
 		{
-			int contadorCiclo = 0;
-			int contadorCaixas = 0;
-			if (!(this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B'))
+			
+			if (this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B')
+			{
+				resposta = resposta + ":caixaSucesso";
+				contadorCaixas = contadorCaixas + 1;
+			}			
+			else
 			{
 				resposta = resposta;
 			}
+			contadorCiclo = contadorCiclo + 1;
 			
-			else if (this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B')
+		}
+		//System.out.println("contadorCiclo= " + contadorCiclo);
+		//System.out.println("contador caixas = " + contadorCaixas);
+		
+		if (contadorCaixas == contadorCiclo)
+		{	
+			if (!(getLevel() == 4))
 			{
-				resposta = resposta + ":caixaSucesso";
-				contadorCaixas = +1 ;
+				System.out.println("nivel=" + getLevel());
+				resposta = resposta + ":nivelConcluido";
+				setLevel(getLevel()+1);
+				System.out.println("novo nivel= " + getLevel());
 			}
-			
-			if (contadorCaixas == contadorCiclo)
-			{	
-				if (!(getLevel() == 4))
-				{
-					resposta = resposta + ":NivelConcluido";
-					setLevel(getLevel()+1);
-				}
-				else
-				{
-					resposta = resposta + ":JogoConcluido";
-				}
+			else
+			{
+				resposta = resposta + ":jogoConcluido";
+			}
 				
-			}
+		}
 			
-		}*/
 				
 		return resposta;		
 }

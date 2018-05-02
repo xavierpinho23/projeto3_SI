@@ -134,26 +134,28 @@ public class Server_Sokoban
 		//Enquanto não sair, nem restar nem ganhar o jogo
 		while (!resposta.equals("quit"))
 		{
-			dataOut.writeUTF(resposta);
-			dataOut.flush();
-			
-			/*if (resposta.contains("movM"))
+			if (resposta.contains("movM"))
 				//inclui o movM e o movMeB
 			{
 				//Perde 1 ponto por movimento válido
 				pontos = pontos - 1;
 			}
-			else if (resposta.equals("nivelConcluido"))
+			if (resposta.contains("nivelConcluido"))
 			{
+				//ganha 100 pontos por concluir um nivel
 				pontos = pontos + 100;
-			}*/
+			}
 			
+			dataOut.writeUTF(resposta);
+			dataOut.flush();
+			
+			dataOut.writeUTF(Integer.toString(pontos));
+			dataOut.flush();
+
 			tecla = dataIn.readUTF();
 			resposta = niveis.movimentos(tecla);
-			
-			
-		}
-				
+		}			
+		
 		//Fechar streams
 		dataIn.close();
 		dataOut.close();
@@ -209,6 +211,5 @@ public class Server_Sokoban
 
 		}
 
-		// use the DataInputStream to read a String sent by the client
 	}
 }
