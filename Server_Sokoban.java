@@ -1,4 +1,4 @@
-package projeto3_SI;
+package SocketsAvaliacao;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * A simple greeting server. More information about sockets at:
  * http://download.oracle.com/javase/tutorial/networking/sockets/index.html
- * and in the book "Head First Java" - Chapter 15.
+ * and in the book 'Head First Java' - Chapter 15.
  */
 public class Server_Sokoban
 {
@@ -46,19 +46,21 @@ public class Server_Sokoban
 		InputStream in = socket.getInputStream();
 		DataInputStream dataIn = new DataInputStream(in);
 		
-		String msg = dataIn.readUTF();
-		System.out.println("Mensagem recebida...");
-		if (msg.contains(" ") || msg.isEmpty()) {
+		
+		
+		String username = dataIn.readUTF();
+		System.out.println("Mensagem recebida 1...");
+		
+		if (username == " " || username.isEmpty()) {
 			dataOut.writeUTF("NotOk");
 			dataOut.flush();
 		}
 		else {
-		dataOut.writeUTF("Ok");
-		dataOut.flush();
+			dataOut.writeUTF("Ok");
+			dataOut.flush();
+			ClienteSokoban cliente = new ClienteSokoban(username);
 		}
 		
-		
-		//Fechar streams
 		}
 		catch (IOException e) {
 			//Tratamento de falhas
@@ -79,22 +81,24 @@ public class Server_Sokoban
 		InputStream in = socket.getInputStream();
 		DataInputStream dataIn = new DataInputStream(in);
 		
-		String msg = dataIn.readUTF();
-		System.out.println("Mensagem recebida...");
-		while(!(msg.equals("1")) && !(msg.equals("2")) && !(msg.equals("3")) && !(msg.equals("4")))
+		//Leitura do nivel escolhido pelo cliente
+		String level = dataIn.readUTF();
+		System.out.println("Mensagem recebida 2...");
+		
+		while(!(level.equals("1")) && !(level.equals("2")) && !(level.equals("3")) && !(level.equals("4")))
 		{
 			dataOut.writeUTF("ERRO");
 			dataOut.flush();
-			msg = dataIn.readUTF();
+			level = dataIn.readUTF();
 		}
-			
-
-		niveis = new Nivel_Sokoban(Integer.parseInt(msg));
+		
+		niveis = new Nivel_Sokoban(Integer.parseInt(level));
 		String tabuleiro = niveis.toString();
 		
+		//System.out.println("tabuleiro=" + tabuleiro);
 		
-		dataOut.writeUTF("nivel:" + niveis.getLevel() + "\n" + tabuleiro);
-
+		//enviar o tabuleiro para o Cliente
+		dataOut.writeUTF("nivel: " + niveis.getLevel() + "\n" + tabuleiro);
 		dataOut.flush();
 	
 		}
@@ -107,7 +111,7 @@ public class Server_Sokoban
 	}
 	private void trata3Conexao(Socket socket) throws IOException {
 		
-		//Tratar conversação cliente - servidor na escolha do nível
+		//Tratar conversação cliente - jogar
 		
 		try {	//Criar stream de entrada e saída
 		OutputStream out = socket.getOutputStream();
@@ -116,25 +120,44 @@ public class Server_Sokoban
 		InputStream in = socket.getInputStream();
 		DataInputStream dataIn = new DataInputStream(in);
 		
-		String tecla = dataIn.readUTF();
-		System.out.println("Mensagem recebida..." + tecla);
-
-			
+		//System.out.println("Mensagem recebida 3...");
 		
+		String tecla = dataIn.readUTF();
+		//System.out.println("tecla = " + tecla);
+
 		String resposta = niveis.movimentos(tecla);
-		System.out.println(resposta);
+		//System.out.println("return = " + resposta);
+		
+		//Pontos iniciais
+		int pontos = 0;
+				
 		//Enquanto não sair, nem restar nem ganhar o jogo
 		while (!resposta.equals("quit"))
 		{
-			dataOut.writeUTF(resposta);	
+			dataOut.writeUTF(resposta);
 			dataOut.flush();
+			
+			/*if (resposta.contains("movM"))
+				//inclui o movM e o movMeB
+			{
+				//Perde 1 ponto por movimento válido
+				pontos = pontos - 1;
+			}
+			else if (resposta.equals("nivelConcluido"))
+			{
+				pontos = pontos + 100;
+			}*/
+			
+			tecla = dataIn.readUTF();
+			resposta = niveis.movimentos(tecla);
+			
+			
 		}
-		
-		dataOut.flush();
-		
+				
 		//Fechar streams
 		dataIn.close();
 		dataOut.close();
+		
 		}
 		catch (IOException e) {
 			//Tratamento de falhas
@@ -153,7 +176,8 @@ public class Server_Sokoban
 			ArrayList<String> users = new ArrayList<String>();
 			ArrayList<Integer> pontuações = new ArrayList<Integer>();
 		
-		try {
+		try
+		{
 
 			// Wait and accept a connection
 			Server_Sokoban server = new Server_Sokoban();
@@ -162,29 +186,29 @@ public class Server_Sokoban
 			while (true)
 			{
 				System.out.println("1");
-				//Primeira conexão - login
+				// Primeira conexão - login
 				Socket socket = server.esperaConexao();
 				System.out.println("Cliente conectado.");
 				server.trata1Conexao(socket);
-				
-				//Segunda conexão - escolha de nivel
+
+				// Segunda conexão - escolha de nivel
 				System.out.println("2");
-				//server.esperaConexao();
+				// server.esperaConexao();
 				server.trata2Conexao(socket);
-				
-				//Terceira conexão - jogo
+
+				// Terceira conexão - jogo
 				System.out.println("3");
 				server.trata3Conexao(socket);
-				
 				System.out.println("Cliente finalizado.");
-			
-		}}
-		catch (IOException e){
-			
+
+			}
+		}
+		catch (IOException e)
+		{
+			System.out.println("upsss");
+
 		}
 
-
-
-			// use the DataInputStream to read a String sent by the client
-		}
+		// use the DataInputStream to read a String sent by the client
 	}
+}
