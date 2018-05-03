@@ -385,7 +385,6 @@ public class Nivel_Sokoban
 				resposta = resposta;
 			}
 			contadorCiclo = contadorCiclo + 1;
-			
 		}
 		//System.out.println("contadorCiclo= " + contadorCiclo);
 		//System.out.println("contador caixas = " + contadorCaixas);
@@ -395,18 +394,18 @@ public class Nivel_Sokoban
 			if (!(getLevel() == 4))
 			{
 				System.out.println("nivel=" + getLevel());
-				resposta = resposta + ":nivelConcluido";
 				setLevel(getLevel()+1);
-				System.out.println("novo nivel= " + getLevel());
+				
+				//int novoNivel = getLevel()+1;
+				//String novoNivelString = Integer.toString(novoNivel);
+				resposta = resposta + ":nivelConcluido"; //+novoNivelString;
+				System.out.println("novo nivel = " + getLevel());
 			}
 			else
 			{
 				resposta = resposta + ":jogoConcluido";
-			}
-				
+			}		
 		}
-			
-				
 		return resposta;		
 }
 }

@@ -141,10 +141,13 @@ public class Cliente_Sokoban
 					}*/
 					
 
-					System.out.println("serverResponse= " + serverResponse);
+					System.out.println("serverResponse = " + serverResponse);
 					String[] response = serverResponse.split(":");
-					// System.out.println("response[0] = " + response[0]);
-
+					for (int i = 0; i< response.length; i++)
+					{
+						System.out.println("response " + i + ":" + response[i]);
+					}
+					
 					if (response[0].equals("teclaInvalida"))
 					{
 						System.out.println("Tecla Inválida!");
@@ -197,25 +200,25 @@ public class Cliente_Sokoban
 					else if (response[0].equals("movInvalido"))
 					{
 						System.out.println("MovimentoInválido");
-						continue;
+					}
+					
+					if (response[response.length-2].contains("caixaSucesso"))
+					{
+						System.out.println("CaixaSucesso");
 					}
 					if (response[response.length - 1].equals("nivelConcluido"))
 					{
 						System.out.println("NivelConcluido!");
 						level = level + 1;
 						niveis = new Nivel_Sokoban(Integer.parseInt(level));
-						System.out.println("HIGHSCORES: \n " + cliente.highscores() );
-						
-						continue;
+						//jogar = false;
+						//System.out.println("HIGHSCORES: \n " + cliente.highscores() );
+
 					}
-					if (response[2].contains("caixaSucesso"))
-					{
-						System.out.println("CaixaSucesso");
-					}
-					if (response[response.length - 1].equals("jogoConcluido"))
+					else if (response[response.length - 1].equals("jogoConcluido"))
 					{
 						System.out.println("jogoConcluido");
-						login = false;
+						//login = false;
 					}
 
 					for (int i = 1; i < posicoes.size(); i += 2)
