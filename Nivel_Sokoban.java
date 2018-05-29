@@ -1,4 +1,4 @@
-package SocketsAvaliacao;
+package projeto3_SI;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -213,7 +213,7 @@ public class Nivel_Sokoban
 				{ ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', '*', '*', '*', '*', '*', '*', ' ', ' ',' ' },
 				{ ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ',' ' },
 				{ '*', '*', '*', '*', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', '*', '*','*' },
-				{ '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', '*', '*','*' },
+				{ '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ','*' },
 				{ '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ','*' },
 				{ '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ','*' },
 				{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*','*' },};
@@ -329,7 +329,12 @@ public class Nivel_Sokoban
 					resposta = "movInvalido";
 				}
 				else
-				{				
+				{	resposta = "movMeB:" + M1.getX() + "," + M1.getY() + ":" + fB.getX() + "," + fB.getY();
+					
+					//Se a caixa for para o local de entrega, emite-se um caixaSucesso
+					if (table[(int) fB.getX()][(int) fB.getY()] == 'X') {
+						resposta = resposta + ":caixaSucesso";
+					}
 					this.table[(int) pointsNivel.get(0).getX()][(int) pointsNivel.get(0).getY()] = ' ';
 					this.table[(int) M1.getX()][(int) M1.getY()] = 'M';
 					this.table[(int) fB.getX()][(int) fB.getY()] = 'B';
@@ -337,36 +342,11 @@ public class Nivel_Sokoban
 					pointsNivel.get(i).setLocation(fB.getX(), fB.getY());					
 					pointsNivel.get(0).setLocation(M1.getX(), M1.getY());
 
-					resposta = "movMeB:" + M1.getX() + "," + M1.getY() + ":" + fB.getX() + "," + fB.getY();
+					
 				}
 			}
 		}	
 		}
-		/*for (int i = 1; i<pointsNivel.size();i+=2)
-			//Locais de Entrega X
-		{
-			if (table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B')
-			{
-				this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] = 'B';
-			}
-			else if (table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'M')
-			{
-				this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] = 'M';
-			}
-			else
-			{
-				this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] = 'X';
-			}
-
-		
-		}*/
-		//matriz do servidor
-			/*for (int r = 0;r<table.length;r++) {
-				for (int j = 0; j<table[0].length;j++) {
-					System.out.print(table[r][j]);
-				}
-				System.out.println("\n");
-			}*/
 		
 		//Verificar se o nivel está concluido
 		int contadorCiclo = 0;
@@ -377,29 +357,19 @@ public class Nivel_Sokoban
 			
 			if (this.table[(int) pointsNivel.get(i).getX()][(int) pointsNivel.get(i).getY()] == 'B')
 			{
-				resposta = resposta + ":caixaSucesso";
 				contadorCaixas = contadorCaixas + 1;
 			}			
-			else
-			{
-				resposta = resposta;
-			}
+			
 			contadorCiclo = contadorCiclo + 1;
 		}
-		//System.out.println("contadorCiclo= " + contadorCiclo);
-		//System.out.println("contador caixas = " + contadorCaixas);
 		
 		if (contadorCaixas == contadorCiclo)
 		{	
 			if (!(getLevel() == 4))
 			{
 				System.out.println("nivel=" + getLevel());
-				setLevel(getLevel()+1);
+				resposta = resposta + ":nivelConcluido"; //
 				
-				//int novoNivel = getLevel()+1;
-				//String novoNivelString = Integer.toString(novoNivel);
-				resposta = resposta + ":nivelConcluido"; //+novoNivelString;
-				System.out.println("novo nivel = " + getLevel());
 			}
 			else
 			{

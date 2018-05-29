@@ -1,4 +1,4 @@
-package SocketsAvaliacao;
+package projeto3_SI;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,43 +24,54 @@ public class Cliente_Sokoban
 	// but it also keeps us from handling possible IO errors
 	// (when for instance there is a problem when connecting with the other party)
 
-	public static char[][] tabuleiro(String serverResponse)
+	public char[][] tabuleiro(String serverResponse)
 	{
 
 		String[] tab = serverResponse.split("\n");
-		char[][] tabs = new char[tab.length][tab[1].length()];
+		char[][] tabs = new char[tab.length][tab[2].length()];
 
-		for (int i = 0; i < tab.length; i++)
+		for (int i = 1; i < tabs.length; i++)
 		{
-			tabs[i] = tab[i].toCharArray();
+			for (int j = 0; j< tabs[0].length;j++) {
+				
+				tabs[i-1][j]=tab[i].charAt(j);
+			
+			}
 		}
-		System.out.println(Arrays.toString(tabs));
 
 		return tabs;
 	}
 
 	public static void main(String args[]) throws IOException
 	{
+		Point M = null;
+		ArrayList<Point> Xs = new ArrayList<Point>();
+		Point X = null;
+		Cliente_Sokoban cliente = new Cliente_Sokoban();
 		try
 		{
 			boolean jogar = true;
-			boolean login = true;
+			boolean menu = true;
 			String username;
 			String resposta;
 			Scanner scan = new Scanner(System.in);
 
-			// Open your connection to a server, at port 1234
-			Socket socket = new Socket("localhost", 1234);
 
-			// Build DataStreams (input and output) to send and receive messages to/from the server
-			OutputStream out = socket.getOutputStream();
-			DataOutputStream dataOut = new DataOutputStream(out);
+			System.out.println("===========WELCOME TO SOKOBAN!=================");
 
-			InputStream in = socket.getInputStream();
-			DataInputStream dataIn = new DataInputStream(in);
-			while (login)
+			
+			while (menu)
 			{
-				System.out.println("===========WELCOME TO SOKOBAN!=================");
+				// Open your connection to a server, at port 1234
+				Socket socket = new Socket("localhost", 1234);
+
+				// Build DataStreams (input and output) to send and receive messages to/from the server
+				OutputStream out = socket.getOutputStream();
+				DataOutputStream dataOut = new DataOutputStream(out);
+
+				InputStream in = socket.getInputStream();
+				DataInputStream dataIn = new DataInputStream(in);
+				
 				System.out.println("Introduza o USERNAME: ");
 
 				username = scan.nextLine();
@@ -76,10 +87,11 @@ public class Cliente_Sokoban
 					scan.nextLine();
 					dataOut.writeUTF(username);
 					dataOut.flush();
+					
+					resposta = dataIn.readUTF();
 				}
+				jogar = true;
 
-				ClienteSokoban cliente = new ClienteSokoban(username);
-				ClienteSokoban.clientes.add(cliente);
 
 				System.out.println("==========Bem vindo: " + username + "!==============");
 
@@ -111,12 +123,30 @@ public class Cliente_Sokoban
 
 					serverResponse = dataIn.readUTF();
 				}
-
-				System.out.println("Servidor disse: " + serverResponse);
-
-				// abrir o tabuleiro do nivel escolhido
-				Nivel_Sokoban niveis = new Nivel_Sokoban(Integer.parseInt(level));
-				ArrayList<Point> posicoes = niveis.pointsNivel;
+				
+				char[][] tabs = cliente.tabuleiro(serverResponse);
+				
+				for (int i = 0; i < tabs.length; i++)
+				{
+					System.out.println(tabs[i]);
+				}
+				System.out.println();
+				
+				for (int i = 0; i<tabs.length;i++) {
+					for (int j = 0;j<tabs[0].length;j++) {
+						if (tabs[i][j]=='M') {
+							M = new Point(i,j);
+						}
+					}
+				}
+				for (int i = 0; i<tabs.length;i++) {
+					for (int j = 0;j<tabs[0].length;j++) {
+						if (tabs[i][j]=='X') {
+							X = new Point(i,j);
+							Xs.add(X);
+						}
+					}
+				}
 
 				while (jogar)
 				{
@@ -126,27 +156,10 @@ public class Cliente_Sokoban
 					dataOut.flush();
 
 					serverResponse = dataIn.readUTF();
-					// pontos
-					String pontos = dataIn.readUTF();
-					System.out.println("Pontos = " + pontos);
-					int pt = Integer.parseInt(pontos);
-					cliente.setPontos(pt);
 					
-					/*for (int k; k < ClienteSokoban.clientes.size();k++)
-					{
-						if (cliente.getUsername().equals(ClienteSokoban.clientes.get(k).getUsername()))
-						{
-							ClienteSokoban.clientes.get(k).setPontuacoes(cliente.getPontos());
-						}
-					}*/
 					
-
-					System.out.println("serverResponse = " + serverResponse);
+					
 					String[] response = serverResponse.split(":");
-					for (int i = 0; i< response.length; i++)
-					{
-						System.out.println("response " + i + ":" + response[i]);
-					}
 					
 					if (response[0].equals("teclaInvalida"))
 					{
@@ -155,6 +168,7 @@ public class Cliente_Sokoban
 					}
 					else if (response[0].equals("movM"))
 					{
+						System.out.println("Pontos: " + response[response.length-1]);
 						String[] coord = response[1].split(",");
 						double x1 = Double.parseDouble(coord[0]);
 						int x = (int) x1;
@@ -162,14 +176,15 @@ public class Cliente_Sokoban
 						int y = (int) y1;
 
 						// Posicao antiga de M passa a vazia
-						niveis.table[(int) posicoes.get(0).getX()][(int) posicoes.get(0).getY()] = ' ';
+						tabs[(int) M.getX()][(int) M.getY()] = ' ';
 						// Nova posição de M
-						posicoes.get(0).setLocation(x, y);
-						niveis.table[x][y] = 'M';
+						M.setLocation(x, y);
+						tabs[x][y] = 'M';
 
 					}
 					else if (response[0].equals("movMeB"))
 					{
+						System.out.println("Pontos: " + response[response.length-1]);
 						String[] coordm = response[1].split(",");
 						double mx1 = Double.parseDouble(coordm[0]);
 						int mx = (int) mx1;
@@ -182,75 +197,136 @@ public class Cliente_Sokoban
 						double by1 = Double.parseDouble(coordb[1]);
 						int by = (int) by1;
 
-						niveis.table[(int) posicoes.get(0).getX()][(int) posicoes.get(0).getY()] = ' ';
-						posicoes.get(0).setLocation(mx, my);
+						tabs[(int) M.getX()][(int) M.getY()] = ' ';
+						M.setLocation(mx, my);
 
-						niveis.table[(int) posicoes.get(0).getX()][(int) posicoes.get(0).getY()] = 'M';
-						niveis.table[bx][by] = 'B';
+						tabs[(int)M.getX()][(int) M.getY()] = 'M';
+						tabs[bx][by] = 'B';
 
 					}
-					else if (response[0].equals("restart"))
+					else if (Arrays.asList(response).contains("restart"))
 					{
-						login = false;
-					}
-					else if (response[0].equals("quit"))
-					{
+						String[] str = response[response.length-1].split("\n");
+						String[] keysandvalues = new String[str.length];
+						for (int i = 0; i<str.length;i++) {
+							String[] str2 = str[i].split(";");
+							keysandvalues[i] ="\nNome: " + str2[1] + " => " + str2[0] + " Pontos.";
+							
+							
+							}
+					
+						System.out.println("Highscores: " + Arrays.toString(keysandvalues));
+						Xs.clear();
 						jogar = false;
 					}
-					else if (response[0].equals("movInvalido"))
+					else if (Arrays.asList(response).contains("quit"))
 					{
-						System.out.println("MovimentoInválido");
+						String[] str = response[response.length-1].split("\n");
+						String[] keysandvalues = new String[str.length];
+						for (int i = 0; i<str.length;i++) {
+							String[] str2 = str[i].split(";");
+							keysandvalues[i] ="Nome: " + str2[1] + " => " + str2[0] + " Pontos.";
+							
+							
+							}
+					
+						System.out.println("Highscores: " + Arrays.toString(keysandvalues));
+						System.out.println("\nAté à próxima!");
+						menu = false;
+						break;
+					}
+					else if (Arrays.asList(response).contains("movInvalido"))
+					{
+						System.out.println("Movimento Inválido");
 					}
 					
-					if (response[response.length-2].contains("caixaSucesso"))
+					if (Arrays.asList(response).contains("caixaSucesso"))
 					{
-						System.out.println("CaixaSucesso");
+						System.out.println("Caixa Sucesso");
 					}
-					if (response[response.length - 1].equals("nivelConcluido"))
+					if (Arrays.asList(response).contains("nivelConcluido"))
 					{
-						System.out.println("NivelConcluido!");
-						level = level + 1;
-						niveis = new Nivel_Sokoban(Integer.parseInt(level));
+						
+						level = Integer.toString(Integer.parseInt(level) + 1);
+						System.out.println("NivelConcluido! \nPassou para o nível " + level);
+						dataOut.writeUTF(level);
+						dataOut.flush();
+						
+						serverResponse = dataIn.readUTF();
+						
+						tabs = cliente.tabuleiro(serverResponse);
+						
+						Xs.clear();
+						for (int i = 0; i<tabs.length;i++) {
+							for (int j = 0;j<tabs[0].length;j++) {
+								if (tabs[i][j]=='M') {
+									M = new Point(i,j);
+								}
+							}
+						}
+						for (int i = 0; i<tabs.length;i++) {
+							for (int j = 0;j<tabs[0].length;j++) {
+								if (tabs[i][j]=='X') {
+									X = new Point(i,j);
+									Xs.add(X);
+								}
+							}
+						}
+						
 						//jogar = false;
 						//System.out.println("HIGHSCORES: \n " + cliente.highscores() );
+						
 
 					}
 					else if (response[response.length - 1].equals("jogoConcluido"))
 					{
-						System.out.println("jogoConcluido");
-						//login = false;
+						String[] str = response[response.length-1].split("\n");
+						String[] keysandvalues = new String[str.length];
+						for (int i = 0; i<str.length;i++) {
+							String[] str2 = str[i].split(";");
+							keysandvalues[i] ="\nNome: " + str2[1] + " => " + str2[0] + " Pontos.";
+							
+							
+							}
+					
+						System.out.println("Highscore: " + Arrays.toString(keysandvalues));
+						System.out.println("\nJogo Concluído!");
+						
+						jogar = false;
 					}
 
-					for (int i = 1; i < posicoes.size(); i += 2)
+					for (int i = 0; i < Xs.size(); i += 2)
 					// Locais de Entrega X
 					{
-						if (niveis.table[(int) posicoes.get(i).getX()][(int) posicoes.get(i).getY()] == 'B')
+						if (tabs[(int) Xs.get(i).getX()][(int) Xs.get(i).getY()] == 'B')
 						{
-							niveis.table[(int) posicoes.get(i).getX()][(int) posicoes.get(i).getY()] = 'B';
+							tabs[(int) Xs.get(i).getX()][(int) Xs.get(i).getY()] = 'B';
 						}
-						else if (niveis.table[(int) posicoes.get(i).getX()][(int) posicoes.get(i).getY()] == 'M')
+						else if (tabs[(int) Xs.get(i).getX()][(int) Xs.get(i).getY()] == 'M')
 						{
-							niveis.table[(int) posicoes.get(i).getX()][(int) posicoes.get(i).getY()] = 'M';
+							tabs[(int) Xs.get(i).getX()][(int) Xs.get(i).getY()] = 'M';
 						}
 						else
 						{
-							niveis.table[(int) posicoes.get(i).getX()][(int) posicoes.get(i).getY()] = 'X';
+							tabs[(int) Xs.get(i).getX()][(int) Xs.get(i).getY()] = 'X';
 						}
 					}
-					for (int i = 0; i < niveis.table.length; i++)
+					for (int i = 0; i < tabs.length; i++)
 					{
-						System.out.println(niveis.table[i]);
+						System.out.println(tabs[i]);
 					}
 					System.out.println();
 
 				}
-
-				// Cleanup operations, close the streams, socket and then exit
+				
 				dataOut.close();
 				dataIn.close();
 				socket.close();
-				scan.close();
 			}
+			// Cleanup operations, close the streams, socket and then exit
+			
+			scan.close();
+			
 		}
 		catch (IOException ex)
 		{
